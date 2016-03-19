@@ -13,28 +13,29 @@ public class Main {
     public static void main(String[] args) {
 
       PointerByReference pointerByReference=new PointerByReference();
-      try
-      {
-        Socket socket=null;
+      Socket socket = null;
 
-        FileInputStream fis = new FileInputStream("/tmp/test");
+      if (SELinux.instance.is_selinux_enabled() == 1 ) {
+        try {
 
-        int fd = getFileDescriptor(fis);  //getFileDescriptor(socket.getInputStream());
+          FileInputStream fis = new FileInputStream("/tmp/test");
 
-        int peercon = SELinux.instance.fgetfilecon_raw(fd,pointerByReference);
-        System.out.println( "Peercon returned " +peercon);
-        System.out.println(pointerByReference.getValue().getString(0));
+          int fd = getFileDescriptor(fis);  //getFileDescriptor(socket.getInputStream());
+
+          int peercon = SELinux.instance.fgetfilecon_raw(fd, pointerByReference);
+          System.out.println("Peercon returned " + peercon);
+          System.out.println(pointerByReference.getValue().getString(0));
+        }
+        catch(LastErrorException lee)
+        {
+          System.err.println("Error code is " + lee.getErrorCode());
+          System.err.println(lee.getMessage());
+        }
+        catch(Exception ex)
+        {
+          ex.printStackTrace();
+        }
       }
-      catch(LastErrorException lee)
-      {
-        System.err.println("Error code is "+lee.getErrorCode());
-        System.err.println(lee.getMessage());
-      }
-      catch(Exception ex)
-      {
-        ex.printStackTrace();
-      }
-
     }
 
     public static int getFileDescriptor(FileDescriptor fd) throws IOException
