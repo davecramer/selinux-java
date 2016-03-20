@@ -1,3 +1,3 @@
 # selinux-java
 
-Wrapper in java for selinux library
+Wrapper in java for selinux library.
